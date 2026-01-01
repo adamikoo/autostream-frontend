@@ -128,7 +128,7 @@ export default function App() {
     const checkHealth = async () => {
       try {
         // Try local if needed, but per request checking HF Space
-        const res = await fetch('https://adamikoo-autostream-backend.hf.space/health');
+        const res = await fetch('https://prismanotes-autostream-worker.hf.space/health');
         if (res.ok) setIsBackendOnline(true);
         else setIsBackendOnline(false);
       } catch (e) {
