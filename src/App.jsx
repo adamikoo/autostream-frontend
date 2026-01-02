@@ -87,9 +87,7 @@ export default function App() {
 
   // If not authenticated, show Login (and prevent access to rest)
   // Privacy/Terms are already handled above by checking "path"
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
-  }
+  // MOVED CHECK DOWN to prevent "Rendered more hooks" error
 
   const [projects, setProjects] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' or 'logs'
@@ -454,25 +452,31 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 bg-white">
-        {renderContent()}
+        {!isAuthenticated ? (
+          <Login onLogin={handleLogin} />
+        ) : (
+          <>
+            {renderContent()}
 
-        {/* Create Modal */}
-        {isNewProjectModalOpen && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-              <form onSubmit={handleCreateProject} className="p-6 space-y-5">
-                <h3 className="text-xl font-bold">New Project</h3>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Topic</label>
-                  <input autoFocus type="text" value={newTopic} onChange={(e) => setNewTopic(e.target.value)} className="w-full p-3 rounded-xl bg-slate-50 border-slate-200" />
+            {/* Create Modal */}
+            {isNewProjectModalOpen && (
+              <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                  <form onSubmit={handleCreateProject} className="p-6 space-y-5">
+                    <h3 className="text-xl font-bold">New Project</h3>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Topic</label>
+                      <input autoFocus type="text" value={newTopic} onChange={(e) => setNewTopic(e.target.value)} className="w-full p-3 rounded-xl bg-slate-50 border-slate-200" />
+                    </div>
+                    <div className="flex gap-3 mt-8 pt-2">
+                      <button type="button" onClick={() => setIsNewProjectModalOpen(false)} className="flex-1 py-3 text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+                      <button type="submit" className="flex-1 py-3 bg-slate-900 text-white font-bold rounded-xl">Create</button>
+                    </div>
+                  </form>
                 </div>
-                <div className="flex gap-3 mt-8 pt-2">
-                  <button type="button" onClick={() => setIsNewProjectModalOpen(false)} className="flex-1 py-3 text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
-                  <button type="submit" className="flex-1 py-3 bg-slate-900 text-white font-bold rounded-xl">Create</button>
-                </div>
-              </form>
-            </div>
-          </div>
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
