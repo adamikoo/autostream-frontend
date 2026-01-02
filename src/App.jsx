@@ -3,6 +3,8 @@ import BotConfig from './BotConfig';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Schedule from './pages/Schedule';
+import Overview from './pages/Overview';
+import Login from './pages/Login';
 import { supabase } from './supabase';
 import {
   Plus,
@@ -24,7 +26,10 @@ import {
   Layers,
   ChevronRight,
   Clock,
-  Calendar
+  ChevronRight,
+  Clock,
+  Calendar,
+  TrendingUp
 } from 'lucide-react';
 
 // --- Constants ---
@@ -71,6 +76,22 @@ export default function App() {
   // For V1 Free Tier, we skip Auth logic and just use a hardcoded "Demo User"
   // In a real app, use supabase.auth.signUp()
   const [userId] = useState('demo-user-123');
+
+  // --- Password Protection ---
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('app_authenticated') === 'true';
+  });
+
+  const handleLogin = () => {
+    localStorage.setItem('app_authenticated', 'true');
+    setIsAuthenticated(true);
+  };
+
+  // If not authenticated, show Login (and prevent access to rest)
+  // Privacy/Terms are already handled above by checking "path"
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   const [projects, setProjects] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' or 'logs'
@@ -229,6 +250,7 @@ export default function App() {
   );
 
   const renderContent = () => {
+    if (activeTab === 'overview') return <Overview />;
     if (activeTab === 'schedule') return <Schedule />;
     if (activeTab === 'logs') return (
       <div className="flex-1 bg-slate-900 p-8 overflow-auto font-mono text-sm">
@@ -387,6 +409,14 @@ export default function App() {
           >
             <Layout size={20} />
             <span className="hidden lg:block font-medium">Dashboard</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`w-full flex items-center justify-center lg:justify-start gap-3 px-3 py-3 rounded-xl transition-all ${activeTab === 'overview' ? 'bg-blue-600/10 text-blue-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}`}
+          >
+            <TrendingUp size={20} />
+            <span className="hidden lg:block font-medium">Analytics</span>
           </button>
 
           <button
