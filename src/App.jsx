@@ -26,8 +26,6 @@ import {
   Layers,
   ChevronRight,
   Clock,
-  ChevronRight,
-  Clock,
   Calendar,
   TrendingUp
 } from 'lucide-react';
